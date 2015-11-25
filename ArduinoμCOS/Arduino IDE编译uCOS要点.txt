@@ -1,0 +1,106 @@
+﻿1。移植步骤参照--uCOS移植AVR要点.doc。这里只指出是如何在Arduino IDE下编译uCOS
+的。
+
+2。为实现uCOS任务调度功能，需做如下修改：
+①\hardware\arduino\cores\arduino\main.cpp，注释init()和loop()；
+②\hardware\arduino\cores\arduino\wiring.c，注释SIGNAL(TIMER0_OVF_vect)，因为该中断需作
+为uCOS的时钟滴答；
+③\hardware\arduino\cores\arduino\wiring.c，修改init()关于定时器0的初始化，由64分频改为
+1024分频；
+④在你的sketch中，添加#include "ucos.h"，即可使用uCOS提供的服务。前提是要把ucos的文
+件夹放到\arduino\libraries下；
+⑤在你的sketch中，使用setup()函数进行任务创建和uCOS的启动，并在最高优先级任务中调用
+init()；
+⑥作了以上修改后，Arduino原有的功能将有些不能使用。包括：millis()、micros()、delay()，
+但delayMicroseconds()不受限制。具体是因为对定时器0预分频值和定时器0中断服务函数的修
+改；
+⑦如果改用其他定时器作为uCOS的时钟源，则时钟滴答将会更加准确，因为AVR中断系统中定时
+器0溢出中断优先级较低。必要时可以考虑使用；
+⑧如果你需要调试文件，在Arduino IDE下，按住shift+右箭头编译，前往用户临时文件夹，会
+找到xxx.elf的链接文件。然后用AVRStudio打开即可进入调试模式。其中,xxx为你的sketch的名
+字；
+⑨该移植工程只为Atmega1280和Atmega2560所用；
+⑩特别注意，一定要删除ucos_ii.c这个文件，否则编译将报错。
+
+3。关于底层的修改：
+①所有的底层函数均采用内联汇编的方式编写，否则Arduino IDE下编译将报错；
+②为①新增两个文件os_cpu_a.h和os_cpu_a.c。这两个文件用于替代os_cpu_a.S；
+③OS_CPU_SR	OS_CPU_SR_Save(void)和void	OS_CPU_SR_Restore不再采用R16作为SREG的暂
+存寄存器，由R24替代。如果在以后的测试中出现问题，这里应该留意；
+④ISR(TIMER0_OVF_vect, ISR_NAKED)时钟滴答，必须使用关键字ISR_NAKED来告知编译器：该ISR
+完全由用户完成，包括压栈、弹栈，甚至是中断返回，而不需要编译器参与完成。这点非常重要。
+
+4在Arduino中使用uCos的思想：
+请将uCos看成是Arduino的一个扩展库，因此uCos应该放在\arduino\libraries下。你可以认为
+uCos是寄生在Arduino上的。嘿嘿，谁在控制谁又有什么关系呢。
+
+
+5。这是一份示例代码：
+#include "ucos.h"
+
+OS_STK TestTask1Stk[OS_TASK_STK_SIZE];
+OS_STK TestTask2Stk[OS_TASK_STK_SIZE];
+OS_STK TestTask3Stk[OS_TASK_STK_SIZE];
+
+void TestTask1(void * p_arg);
+void TestTask2(void * p_arg);
+void TestTask3(void * p_arg);
+
+void *TestMsgQAry[10] = {NULL};
+OS_EVENT *MsgQSem = NULL;
+
+void setup(){  
+  OSInit();  
+  OSTaskCreate(TestTask1, (void *)0, &TestTask1Stk[OS_TASK_STK_SIZE - 1], 2); 
+  OSTaskCreate(TestTask2, (void *)0, &TestTask2Stk[OS_TASK_STK_SIZE - 1], 3); 
+  OSTaskCreate(TestTask3, (void *)0, &TestTask3Stk[OS_TASK_STK_SIZE - 1], 4);   
+  OSStart();  
+}
+
+void TestTask1(void * p_arg)
+{
+  p_arg = p_arg;
+  
+  init();
+  Serial.begin(9600); 
+  Serial.println("Task_1 Rdy to run!!!");
+  
+  MsgQSem = OSQCreate(&TestMsgQAry[0], 10);
+  
+  for(;;){
+    Serial.println("Hello World!");
+    OSQPost(MsgQSem, (void *)3);
+    OSTimeDly(90);
+  }
+}
+
+void TestTask2(void * p_arg)
+{
+  p_arg = p_arg; 
+
+  Serial.println("Task_2 Rdy To Run!!!");
+  
+  for(;;){
+    Serial.println("Lady GaGa!");
+    OSTimeDly(100);
+  }
+}
+
+void TestTask3(void * p_arg)
+{
+  p_arg = p_arg;  
+  INT8U* msg = 0;
+  INT8U err = 0;
+
+  Serial.println("Task_3 Rdy To Run!!!"); 
+  
+  for(;;){
+    msg = (INT8U *)OSQPend(MsgQSem, 0, &err);
+    if( msg == (INT8U *)3){
+      Serial.println("Ono Lisa!");
+    }
+    else{
+      Serial.println("Msg ERR!!!");  
+    }
+  }
+}
