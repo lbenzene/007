@@ -5,7 +5,7 @@
 
 /*=============================================================================
 =============================================================================*/
-
+#define PLEASE_LOG_IT
 
 /*
 *Port Define
@@ -443,6 +443,23 @@ void Delay_ms(const unsigned char wait_time){
     }
 }
 
+#ifdef PLEASE_LOG_IT
+
+struct __we_are_history__ {
+    char Date[15];
+    char Time[10];
+    char File[20];
+    unsigned  Line;
+    unsigned StdCVersion;
+    
+};
+struct __we_are_history__ code Logging={__DATE__,
+                                        __TIME__,
+                                        __FILE__,
+                                        __LINE__,
+                                        __STDC__,
+                                        };
+#endif
 
 #ifdef COMPILE_DEPRE_FUNC
 //------------------------------------------------------------------------------

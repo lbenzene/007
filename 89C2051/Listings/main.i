@@ -799,7 +799,24 @@
  
  
  
-#line 448 "main.c" /1
+ struct __we_are_history__ {
+ char Date[15];
+ char Time[10];
+ char File[20];
+ unsigned  Line;
+ unsigned StdCVersion;
+ 
+ };
+ struct __we_are_history__ code Logging={"May 15 2016",
+  "15:33:20",
+  "main.c",
+  459,
+  1,
+ };
+ 
+ 
+ 
+#line 465 "main.c" /1
  
  
  
@@ -813,4 +830,4 @@
  
  
  
-#line 460 "main.c" /0
+#line 477 "main.c" /0
