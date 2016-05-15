@@ -1,0 +1,371 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"MODE",
+				"MODE_Music"
+			],
+			[
+				"re",
+				"return"
+			],
+			[
+				"timeta",
+				"timetable"
+			],
+			[
+				"led",
+				"ledoutput"
+			],
+			[
+				"freq",
+				"freq_cache"
+			],
+			[
+				"ext",
+				"extwaveFreq"
+			],
+			[
+				"fer",
+				"freq_cache"
+			],
+			[
+				"exter",
+				"externaldata"
+			],
+			[
+				"outp",
+				"outputGroup"
+			],
+			[
+				"per",
+				"period_cache"
+			],
+			[
+				"reg",
+				"reg_low"
+			],
+			[
+				"music",
+				"musicoutput"
+			],
+			[
+				"external",
+				"externaldata"
+			],
+			[
+				"lo",
+				"long"
+			],
+			[
+				"ex",
+				"ex0_isr_counter"
+			],
+			[
+				"rel",
+				"realLoadTime"
+			],
+			[
+				"time",
+				"timeTable"
+			],
+			[
+				"tim",
+				"time_struct"
+			],
+			[
+				"sys",
+				"systemtickTimeConstant"
+			],
+			[
+				"Sys",
+				"SystemTickPeriodReg"
+			],
+			[
+				"TH",
+				"_TH1"
+			],
+			[
+				"Mu",
+				"MusicCounterReg"
+			],
+			[
+				"def",
+				"define"
+			],
+			[
+				"baudcon",
+				"baudRateConstant"
+			],
+			[
+				"baud",
+				"baudRateConstant"
+			],
+			[
+				"TF",
+				"TF1_VECTOR"
+			],
+			[
+				"de",
+				"designed_baud_rate"
+			],
+			[
+				"inc",
+				"inc	#include <…>"
+			],
+			[
+				"Mus",
+				"MusicCounter"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "main.c",
+			"settings":
+			{
+				"buffer_size": 10955,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Packages/Python/Python.sublime-build",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 335.0,
+		"last_filter": "Package Control: ",
+		"selected_items":
+		[
+			[
+				"Package Control: ",
+				"Package Control: Install Package→安装插件"
+			],
+			[
+				"Package Control: ins",
+				"Package Control: Install Package→安装插件"
+			],
+			[
+				"Package",
+				"Preferences: Browse Packages"
+			],
+			[
+				"in",
+				"Package Control: Install Package→安装插件"
+			],
+			[
+				"i",
+				"Package Control: Install Package→安装插件"
+			]
+		],
+		"width": 594.0
+	},
+	"console":
+	{
+		"height": 146.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/G/Programe/8051/89C2051"
+	],
+	"file_history":
+	[
+		"/G/Programe/8051/89C2051/reg2051.h",
+		"/G/Programe/8051/89C2051/sec_main.c",
+		"/G/Programe/8051/89C2051/STARTUP.A51",
+		"/G/temp/MineSweeper-master/minesweeper.py",
+		"/G/temp/graphviz/node_with_dot.gv"
+	],
+	"find":
+	{
+		"height": 38.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"flash",
+			"reg "
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "main.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10955,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9403,
+								9403
+							]
+						],
+						"settings":
+						{
+							"origin_encoding": "ASCII",
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 6157.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 132.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "8051SublimeProject.sublime-project",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 184.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

@@ -1,0 +1,11 @@
+*.obj
+*.out
+*.bak
+*.lst
+*.m51
+*.hex
+*.lnp
+/build
+*.log
+*.build_log.*
+
