@@ -1,23 +1,39 @@
 #include <reg2051.h>
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
+
 /*=============================================================================
 =============================================================================*/
+
+
+/*
+*Port Define
+*P1.0-P1.7 LEDData
+*
+* P3.5 LED bit High
+* P3.1         Mid
+* P3.0         Low
+*
+ */
 
 #define OscillatorFreq      12*1000*1000
 #define LED_DATA 				P1
 							  //P1 port P1.0-P1.7,
-#define LED_SCAN_Line0          P3_0
-#define LED_SCAN_Line1          P3_1
-#define LED_SCAN_Line2          P3_5
+#define LED_SCAN_Line0          P3_0  //low
+#define LED_SCAN_Line1          P3_1  //mid
+#define LED_SCAN_Line2          P3_5  //high
 #define LED_SCAN_Array(a,b,c)   LED_SCAN_Line0=(a);\
-                                 LED_SCAN_Line1=(b);\
-                                 LED_SCAN_Line2=(c);
+                                LED_SCAN_Line1=(b);\
+                                LED_SCAN_Line2=(c);
 
+#define Key_Port_Line           P3_3
 
 #define SystemTickPeriodReg     TH0
 #define SystemTickCounterReg    TL0
+#define OneMilisecondCostSysTick 10
 
+#define MUSIC_Port_line         P3_0
 #define MUSIC_SWITCH            TR1
 #define MUSIC_RYTHM_LEN 		21
 #define MUSIC_ZONE_LEVEL_MAX	7
@@ -38,8 +54,19 @@ typedef struct __internal_time_data__ {
 typedef struct __internal_music_data__ {
     unsigned int  targetPeriod;//output 离散的音频值 period
     unsigned char musicZone,musicZoneLevel,musicZoneID;
-    unsigned char reg_high;//TH1 cached data
-    unsigned char reg_low; //TL1 cached data
+    union{
+        struct __reg_low_high__{
+            unsigned char reg_low; //TL1 cached data
+            unsigned char reg_high;//TH1 cached data
+            //low byte
+            //   |
+            //   |
+            //   \/
+            //high byte
+        }reg_8bit;
+        unsigned int reg_16bit;//uint==16bit
+    }regCache;
+    
     
 } music_struct;
 
@@ -59,7 +86,7 @@ typedef struct __ledseg_struct__{
 //led output
 typedef struct __output__{
     music_struct musicoutput;
-    ledseg 		ledoutput; 
+    ledseg 		 ledoutput;
 }output_struct;
 
 
@@ -76,13 +103,30 @@ void          LedDisplayLoop   (unsigned   char led[3]);
 unsigned char LedDisplaySeg(const unsigned char ledstr);
 
 unsigned MusicRegisterFlash(void);
-void SquareFrequency2OutptFreq(unsigned int inputfreq);
+void SquareFrequency2OutptFreq (unsigned int inputfreq);
+
+void Delay_ms(const unsigned char wait_time);
 /*=============================================================================
 =============================Interrupt part====================================
 =============================================================================*/
 
 void ex0_isr (void)         interrupt IE0_VECTOR {
     externaldata.ex0_isr_counter++;   // Increment the count
+}
+void ex1_isr_pushkey(void)  interrupt IE1_VECTOR{
+    //External Key push made
+    //change     timetable.mode
+    
+    //judge Vailid Press Key
+    
+    //wait for 50 ms
+    Delay_ms(60);
+    if (0==Key_Port_Line)
+    {
+        timetable.mode^=1;//reverse
+    }
+    
+
 }
 void system_tick_isr(void)  interrupt TF0_VECTOR {
     //here are timer0 used as system tick counter;
@@ -95,8 +139,10 @@ void music_change(void)     interrupt TF1_VECTOR {
     //here are timer1 used as music changer
     //toggle level
     //MusicCounterReg(outputGroup.musicoutput.reg_high,outputGroup.musicoutput.reg_low);
-		TH1=outputGroup.musicoutput.reg_high;
-		TL1=outputGroup.musicoutput.reg_low ;
+	TH1=outputGroup.musicoutput.regCache.reg_8bit.reg_high;
+	TL1=outputGroup.musicoutput.regCache.reg_8bit.reg_low ;
+
+    MUSIC_Port_line^=1;//reverse port.
 }
 /*=============================================================================
   ============================Main loop=======================================
@@ -110,7 +156,11 @@ void main (void) {
     global interrupt flag.
     -----------------------------------------------*/
     IT0 = 1;   // Configure interrupt 0 for falling edge on /INT0 (P3.2)
-    EX0 = 1;   // Enable EX0 Interrupt
+    EX0 = 1;   // Enable EX0 Interrupt For SquareWave
+    //-----------------------------------------------
+    //-----------------------------------------------
+    IT1 = 1;   // Configure interrupt 0 for falling edge on /INT1 (P3.3)
+    EX1 = 1;   // Enable EX1 Interrupt For Key
     //-----------------------------------------------
     TMOD =0x12; //Timer0 mode2(8bit autoreload),Timer1 mode1(16bit),disable gate,Used as Counter
     //SystemTickCounter            Music wave
@@ -118,15 +168,20 @@ void main (void) {
     SystemTickCounterReg = systemtickTimeConstant;//TL0
     SystemTickPeriodReg  = systemtickTimeConstant;//TH0
 
-
+    //Priority Config
+    //Timer0, EX_INT0,FirstLevel
+    IP =0;
+    PT0=1;//systick
+    PX0=1;//SquareWave
+    //
     //-----------------------------------------------
     //------------Interrupt--------------------------
     ET1= 1;
     ET0=1;//music channel,systicker,
     //music use isr to reload
-    ES = 0;
-    EX0=1;
-    EX1=0;
+    ES = 0;//serial disable
+    //EX0= 1;
+    //EX1= 1;
     EA = 1;    // Enable Global Interrupt Flag
 
     //------------Init timer-------------------------
@@ -316,6 +371,7 @@ unsigned char LedDisplaySeg(const unsigned char ledstr) {
 //----------Music part---------------
 //-----------------------------------
 unsigned MusicRegisterFlash(void) {
+    unsigned int _half_period;
     //use musicoutput.targetPeriod to set TH1,TL1 in next circle
     if(MODE_Music==timetable.mode)
         MUSIC_SWITCH=1;
@@ -325,7 +381,12 @@ unsigned MusicRegisterFlash(void) {
     }
     //calculate reg
     
-    #error //Left reg Configure
+//    #error //Left reg Configure
+    //use data from outputGroup
+    _half_period=outputGroup.musicoutput.targetPeriod/2;
+    outputGroup.musicoutput.regCache.reg_16bit= 65536- (OscillatorFreq/1000000 )*_half_period /12;
+    //music Reg TC;
+    
     return MODE_Music;
 }
 
@@ -370,7 +431,17 @@ void SquareFrequency2OutptFreq(unsigned int inputfreq){
 	outputGroup.musicoutput.musicZoneID   =i%MUSIC_ZONE_LEVEL_MAX;
 }
 
-
+void Delay_ms(const unsigned char wait_time){
+   
+    unsigned char i;
+    unsigned int  lastTimeStamp=timetable.realLoadTime;
+    //assert(wait_time<256);
+    for(i=0;i<wait_time;i++ ){
+        //for(j=0;j<10;j++);
+        while((timetable.realLoadTime- lastTimeStamp)<OneMilisecondCostSysTick);
+        
+    }
+}
 
 
 #ifdef COMPILE_DEPRE_FUNC

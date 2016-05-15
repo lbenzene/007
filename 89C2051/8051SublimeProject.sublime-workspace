@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"Key",
+				"Key_Port_Line"
+			],
+			[
+				"P3",
+				"P3.3"
+			],
+			[
+				"de",
+				"define"
+			],
+			[
+				"wai",
+				"wait_time"
+			],
+			[
+				"reg",
+				"reg_16bit"
+			],
+			[
+				"target",
+				"targetPeriod"
+			],
+			[
 				"MODE",
 				"MODE_Music"
 			],
@@ -42,10 +66,6 @@
 			[
 				"per",
 				"period_cache"
-			],
-			[
-				"reg",
-				"reg_low"
 			],
 			[
 				"music",
@@ -108,10 +128,6 @@
 				"TF1_VECTOR"
 			],
 			[
-				"de",
-				"designed_baud_rate"
-			],
-			[
 				"inc",
 				"inc	#include <…>"
 			],
@@ -127,8 +143,16 @@
 			"file": "main.c",
 			"settings":
 			{
-				"buffer_size": 10955,
+				"buffer_size": 12789,
 				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "reg2051.h",
+			"settings":
+			{
+				"buffer_size": 4435,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -155,10 +179,22 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 335.0,
-		"last_filter": "Package Control: ",
+		"height": 160.0,
+		"last_filter": "markdown preview",
 		"selected_items":
 		[
+			[
+				"markdown preview",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"install",
+				"Package Control: Install Package→安装插件"
+			],
 			[
 				"Package Control: ",
 				"Package Control: Install Package→安装插件"
@@ -200,10 +236,12 @@
 	},
 	"expanded_folders":
 	[
-		"/G/Programe/8051/89C2051"
+		"/G/Programe/Github_repiratory/89C2051"
 	],
 	"file_history":
 	[
+		"/G/Programe/Github_repiratory/ScriptCollection/README.md",
+		"/D/Program Files/SublimeText3x64/Data/Packages/Git/Git.sublime-settings",
 		"/G/Programe/8051/89C2051/reg2051.h",
 		"/G/Programe/8051/89C2051/sec_main.c",
 		"/G/Programe/8051/89C2051/STARTUP.A51",
@@ -254,15 +292,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10955,
+						"buffer_size": 12789,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								9403,
-								9403
+								4127,
+								4127
 							]
 						],
 						"settings":
@@ -273,10 +311,39 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 6157.0,
+						"translation.y": 7323.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "reg2051.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4435,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								317,
+								317
+							]
+						],
+						"settings":
+						{
+							"origin_encoding": "ASCII",
+							"syntax": "Packages/C++/C++.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 120.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -321,13 +388,17 @@
 	{
 		"height": 0.0
 	},
-	"pinned_build_system": "",
+	"output.markdown":
+	{
+		"height": 132.0
+	},
+	"pinned_build_system": "Packages/Markdown Preview/Markdown.sublime-build",
 	"project": "8051SublimeProject.sublime-project",
 	"replace":
 	{
 		"height": 52.0
 	},
-	"save_all_on_build": true,
+	"save_all_on_build": false,
 	"select_file":
 	{
 		"height": 0.0,

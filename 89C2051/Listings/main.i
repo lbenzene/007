@@ -299,6 +299,75 @@
  
 #line 3 "main.c" /0
  
+  
+#line 1 "F:\Keil\Program\C51\Inc\math.h" /0
+
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+#line 13 "F:\Keil\Program\C51\Inc\math.h" /1
+ 
+ 
+ 
+ 
+ 
+ 
+#line 19 "F:\Keil\Program\C51\Inc\math.h" /0
+ 
+ #pragma SAVE
+ #pragma REGPARMS
+ extern char  cabs  (char  val);
+ 
+ extern int    abs  (int   val);
+ 
+ extern long  labs  (long  val);
+ extern float fabs  (float val);
+ extern float sqrt  (float val);
+ extern float exp   (float val);
+ extern float log   (float val);
+ extern float log10 (float val);
+ extern float sin   (float val);
+ extern float cos   (float val);
+ extern float tan   (float val);
+ extern float asin  (float val);
+ extern float acos  (float val);
+ extern float atan  (float val);
+ extern float sinh  (float val);
+ extern float cosh  (float val);
+ extern float tanh  (float val);
+ extern float atan2 (float y, float x);
+ 
+ extern float ceil  (float val);
+ extern float floor (float val);
+ extern float modf  (float val, float *n);
+ extern float fmod  (float x, float y);
+ extern float pow   (float x, float y);
+ 
+ #pragma RESTORE
+ 
+ 
+#line 4 "main.c" /0
+ 
+ 
+
+ 
+ 
+ 
+
+
+
+
+
+
+
 
  
  
@@ -311,6 +380,9 @@
  
 
 
+ 
+ 
+ 
  
  
  
@@ -336,8 +408,19 @@
  typedef struct __internal_music_data__ {
  unsigned int  targetPeriod; 
  unsigned char musicZone,musicZoneLevel,musicZoneID;
- unsigned char reg_high; 
+ union{
+ struct __reg_low_high__{
  unsigned char reg_low;  
+ unsigned char reg_high; 
+ 
+ 
+ 
+ 
+ 
+ }reg_8bit;
+ unsigned int reg_16bit; 
+ }regCache;
+ 
  
  } music_struct;
  
@@ -357,7 +440,7 @@
  
  typedef struct __output__{
  music_struct musicoutput;
- ledseg 		ledoutput; 
+ ledseg 		 ledoutput;
  }output_struct;
  
  
@@ -374,13 +457,30 @@
  unsigned char LedDisplaySeg(const unsigned char ledstr);
  
  unsigned MusicRegisterFlash(void);
- void SquareFrequency2OutptFreq(unsigned int inputfreq);
+ void SquareFrequency2OutptFreq (unsigned int inputfreq);
+ 
+ void Delay_ms(const unsigned char wait_time);
 
 
  
  
  void ex0_isr (void)         interrupt 0 {
  externaldata.ex0_isr_counter++;    
+ }
+ void ex1_isr_pushkey(void)  interrupt 2{
+ 
+ 
+ 
+ 
+ 
+ 
+ Delay_ms(60);
+ if (0==P3_3)
+ {
+ timetable.mode^=1; 
+ }
+ 
+ 
  }
  void system_tick_isr(void)  interrupt 1 {
  
@@ -393,8 +493,10 @@
  
  
  
- TH1=outputGroup.musicoutput.reg_high;
- TL1=outputGroup.musicoutput.reg_low ;
+ TH1=outputGroup.musicoutput.regCache.reg_8bit.reg_high;
+ TL1=outputGroup.musicoutput.regCache.reg_8bit.reg_low ;
+ 
+  P3_0^=1; 
  }
 
 
@@ -410,6 +512,10 @@
  IT0 = 1;    
  EX0 = 1;    
  
+ 
+ IT1 = 1;    
+ EX1 = 1;    
+ 
  TMOD =0x12;  
  
  TH1=0;TL1=0x66;  
@@ -418,13 +524,18 @@
  
  
  
+ IP =0;
+ PT0=1; 
+ PX0=1; 
+ 
+ 
  
  ET1= 1;
  ET0=1; 
  
- ES = 0;
- EX0=1;
- EX1=0;
+ ES = 0; 
+ 
+ 
  EA = 1;     
  
  
@@ -614,6 +725,7 @@
  
  
  unsigned MusicRegisterFlash(void) {
+ unsigned int _half_period;
  
  if(0==timetable.mode)
   TR1=1;
@@ -624,7 +736,11 @@
  
  
  
-#error *** ERROR C320 IN LINE 328 OF main.c: 
+ 
+ _half_period=outputGroup.musicoutput.targetPeriod/2;
+ outputGroup.musicoutput.regCache.reg_16bit= 65536- (12*1000*1000/1000000 )*_half_period /12;
+ 
+ 
  return 0;
  }
  
@@ -669,11 +785,25 @@
  outputGroup.musicoutput.musicZoneID   =i%7;
  }
  
+ void Delay_ms(const unsigned char wait_time){
+ 
+ unsigned char i;
+ unsigned int  lastTimeStamp=timetable.realLoadTime;
+ 
+ for(i=0;i<wait_time;i++ ){
+ 
+ while((timetable.realLoadTime- lastTimeStamp)<10);
+ 
+ }
+ }
+ 
+ 
+ 
+#line 448 "main.c" /1
  
  
  
  
-#line 377 "main.c" /1
  
  
  
@@ -683,8 +813,4 @@
  
  
  
- 
- 
- 
- 
-#line 389 "main.c" /0
+#line 460 "main.c" /0

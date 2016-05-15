@@ -50,7 +50,7 @@
       <ListingPage>
         <CreateCListing>1</CreateCListing>
         <CreateAListing>1</CreateAListing>
-        <CreateLListing>1</CreateLListing>
+        <CreateLListing>0</CreateLListing>
         <CreateIListing>1</CreateIListing>
         <AsmCond>1</AsmCond>
         <AsmSymb>1</AsmSymb>
