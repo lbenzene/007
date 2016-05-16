@@ -1,98 +1,14 @@
 #include <reg2051.h>
 #include <stdio.h>
-#include <assert.h>
-#include <math.h>
-
-/*=============================================================================
-=============================================================================*/
+#include "common.h"
+/*============================================================================
+*=============================Main.c==========================================
+*=============================================================================*/
 #define PLEASE_LOG_IT
 
-/*
-*Port Define
-*P1.0-P1.7 LEDData
-*
-* P3.5 LED bit High
-* P3.1         Mid
-* P3.0         Low
-*
- */
-
-#define OscillatorFreq      12*1000*1000
-#define LED_DATA 				P1
-							  //P1 port P1.0-P1.7,
-#define LED_SCAN_Line0          P3_0  //low
-#define LED_SCAN_Line1          P3_1  //mid
-#define LED_SCAN_Line2          P3_5  //high
-#define LED_SCAN_Array(a,b,c)   LED_SCAN_Line0=(a);\
-                                LED_SCAN_Line1=(b);\
-                                LED_SCAN_Line2=(c);
-
-#define Key_Port_Line           P3_3
-
-#define SystemTickPeriodReg     TH0
-#define SystemTickCounterReg    TL0
-#define OneMilisecondCostSysTick 10
-
-#define MUSIC_Port_line         P3_0
-#define MUSIC_SWITCH            TR1
-#define MUSIC_RYTHM_LEN 		21
-#define MUSIC_ZONE_LEVEL_MAX	7
-#define systemtickTimeConstant 0xb3//100us
-#define baudRateConstant       0xf6//baud 3215.0
-
-#define MODE_Music 				0
-#define MODE_Freq  				1
-#define LEDSEG_NONE				0xFF
-
-typedef struct __internal_time_data__ {
-   
-    unsigned int  realLoadTime;//16bit
-    //for easy to use in oter application
-    unsigned char mode;
-} sys_struct;
-
-typedef struct __internal_music_data__ {
-    unsigned int  targetPeriod;//output 离散的音频值 period
-    unsigned char musicZone,musicZoneLevel,musicZoneID;
-    union{
-        struct __reg_low_high__{
-            unsigned char reg_low; //TL1 cached data
-            unsigned char reg_high;//TH1 cached data
-            //low byte
-            //   |
-            //   |
-            //   \/
-            //high byte
-        }reg_8bit;
-        unsigned int reg_16bit;//uint==16bit
-    }regCache;
-    
-    
-} music_struct;
-
-typedef struct __internal_exint0_data__ {
-    unsigned char ex0_isr_counter;
-    unsigned int  lastFull,nowFull;
-    unsigned int extwavePeroid,extwaveFreq;//外部信号的周期,频率
-    unsigned char finishedFlag;
-} external_struct;
-
-typedef struct __ledseg_struct__{
-	unsigned char ledString[3];
-    unsigned char ledobject[3];
-
-    
-}ledseg;
-//led output
-typedef struct __output__{
-    music_struct musicoutput;
-    ledseg 		 ledoutput;
-}output_struct;
-
-
-sys_struct timetable;
+sys_struct      timetable;
 external_struct externaldata;
-output_struct outputGroup;
+output_struct   outputGroup;
 /*=============================================================================
 =============================Function Prototype Declear========================
 =============================================================================*/
@@ -125,8 +41,7 @@ void ex1_isr_pushkey(void)  interrupt IE1_VECTOR{
     {
         timetable.mode^=1;//reverse
     }
-    
-
+ 
 }
 void system_tick_isr(void)  interrupt TF0_VECTOR {
     //here are timer0 used as system tick counter;
@@ -190,9 +105,6 @@ void main (void) {
     TR1=1;
     TR0=1;
 
-
-
-
     while (1) {
         DetectSquareWave();
         //release Input sqrtwave info
@@ -212,27 +124,29 @@ void main (void) {
 
 /*=============================================================================
 =============================================================================*/
-void DetectSquareWave(void) {
 #define FUllCountValue 255
+void DetectSquareWave(void) {
+
     //SqrtWave Period Calculate
     if(externaldata.ex0_isr_counter==FUllCountValue) {
 
         //Finished FUllCountValue Flag
-        externaldata.finishedFlag=1;
+        //externaldata.finishedFlag=1;
         
         externaldata.nowFull=timetable.realLoadTime;
         if(externaldata.lastFull>externaldata.nowFull) { //just between the systicker's Zero
             externaldata.extwavePeroid=(65535- externaldata.lastFull+externaldata.nowFull)*100.0/FUllCountValue ;
         } else { //100us
             externaldata.extwavePeroid=(externaldata.nowFull- externaldata.lastFull )*100.0/FUllCountValue;
-        }
+        }//us单位
         externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
         externaldata.lastFull=externaldata.nowFull;
     } else {
-        externaldata.finishedFlag=0;
+        //externaldata.finishedFlag=0;
     }
 }
 void GenerateTarget(void) {
+    unsigned int freq_cache;
 	//Only Operate in VariablesLevel
 	//unsigned int cache;
 	/*
@@ -256,7 +170,7 @@ void GenerateTarget(void) {
 	*/
 	else{
 		//MODE_Freq==timetable.mode
-		unsigned int freq_cache;
+		
         if (externaldata.extwaveFreq>=1000)
         {
             freq_cache=externaldata.extwaveFreq/10;
@@ -307,29 +221,29 @@ unsigned char LedDisplaySeg(const unsigned char ledstr) {
 		};
 	const unsigned char code LedSegments[ USEABLE_LED_SEG_LEN ]={
         //显示字符	共阳极段码
-			0xC0,	//0
-			0xF9,	//1
-			0xA4,	//2
-			0xB0,	//3
-			0x99,	//4
-			0x92,	//5
-			0x82,	//6
-			0xF8,	//7
-			0x80,	//8
-			0x90,	//9
-			0x88,	//A
-			0x83,	//b
-			0xC6,	//C
-			0xA1,	//d
-			0x86,	//E
-			0x8E,	//F
-			0x7F,	//·
-			0x82,	//P
-			0xC1,	//U
-			0xCE,	//T
-			0x91,	//Y
-			0x00,	//8.
-			0xFF,	//None
+			0x28,//0
+            0xed,//1
+            0x34,//2
+            0xa4,//3
+            0xe1,//4
+            0xa2,//5
+            0x22,//6
+            0xec,//7
+            0x20,//8
+            0xa0,//9
+            0x60,//A
+            0x23,//b
+            0x3a,//C
+            0x25,//d
+            0x32,//E
+            0x72,//F
+            0xdf,//.
+            0x22,//P
+            0x29,//U
+            0x7a,//T
+            0xa1,//Y
+            0x0,//8.
+            0xff,//N
 			};
 	unsigned char i;
 	
@@ -349,21 +263,27 @@ unsigned char LedDisplaySeg(const unsigned char ledstr) {
  	outputGroup.ledoutput.ledobject[2]=LedDisplaySeg(led[2]);
  	
  	//Judge if Condition is Satisfied,Flash
- 	if(timetable.realLoadTime%50==0){
+ 	if(timetable.realLoadTime%100==0){//10ms
  		//scan line 0,Choose ledgroup_1
-        LED_SCAN_Array(1,0,0);
+        LED_SCAN_Array(0,1,1);
 	 	LED_DATA=outputGroup.ledoutput.ledobject[0];
+        
+        Delay_ms(1);
 	 	LED_DATA=LEDSEG_NONE;//remove Left shadow
 	 	
 	 	//scan line 1
-        LED_SCAN_Array(0,1,0);   //
+        LED_SCAN_Array(1,0,1);   //
 	 	LED_DATA=outputGroup.ledoutput.ledobject[1];
+        
+        Delay_ms(1);
 	 	LED_DATA=LEDSEG_NONE;
 	 	
 	 	//scan line 2
-        LED_SCAN_Array(0,0,1);
+        LED_SCAN_Array(1,1,0);
 	 	LED_DATA=outputGroup.ledoutput.ledobject[2];
-	 	LED_DATA=LEDSEG_NONE;
+        
+        Delay_ms(1);
+        LED_DATA=LEDSEG_NONE;
 	 }
  	
  }
@@ -433,13 +353,13 @@ void SquareFrequency2OutptFreq(unsigned int inputfreq){
 
 void Delay_ms(const unsigned char wait_time){
    
-    unsigned char i;
-    unsigned int  lastTimeStamp=timetable.realLoadTime;
+    unsigned int i,j;
+    //unsigned int  lastTimeStamp=timetable.realLoadTime;
     //assert(wait_time<256);
     for(i=0;i<wait_time;i++ ){
         //for(j=0;j<10;j++);
-        while((timetable.realLoadTime- lastTimeStamp)<OneMilisecondCostSysTick);
-        
+        //while((timetable.realLoadTime- lastTimeStamp)<OneMilisecondCostSysTick);
+        for(j=0;j<1000;j++);
     }
 }
 

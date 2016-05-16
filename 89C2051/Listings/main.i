@@ -1,5 +1,5 @@
 
-#line 1 "main.c" /0
+#line 1 "Src\main.c" /0
   
 #line 1 "F:\Keil\Program\C51\Inc\Atmel\reg2051.h" /0
 
@@ -166,7 +166,7 @@
  
  
  
-#line 1 "main.c" /0
+#line 1 "Src\main.c" /0
  
   
 #line 1 "F:\Keil\Program\C51\Inc\stdio.h" /0
@@ -213,151 +213,15 @@
  
  
  
-#line 2 "main.c" /0
+#line 2 "Src\main.c" /0
  
   
-#line 1 "F:\Keil\Program\C51\Inc\assert.h" /0
-
-
-
-
-
+#line 1 "Src\common.h" /0
  
  
  
  
  
- 
- 
- 
-  
-#line 1 "F:\Keil\Program\C51\Inc\stdio.h" /0
-
-
-
-
-
-
- 
- 
- 
-#line 10 "F:\Keil\Program\C51\Inc\stdio.h" /1
-  
- 
- 
-  
- 
- 
- 
-  
- 
- 
- 
-  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-#line 43 "F:\Keil\Program\C51\Inc\stdio.h" /0
- 
-#line 14 "F:\Keil\Program\C51\Inc\assert.h" /0
- 
- 
- 
- 
- 
- 
- 
-
-
-
-
-
- 
-#line 27 "F:\Keil\Program\C51\Inc\assert.h" /1
-  
- 
-#line 29 "F:\Keil\Program\C51\Inc\assert.h" /0
- 
- 
-#line 3 "main.c" /0
- 
-  
-#line 1 "F:\Keil\Program\C51\Inc\math.h" /0
-
-
-
-
-
-
- 
- 
- 
- 
- 
- 
-#line 13 "F:\Keil\Program\C51\Inc\math.h" /1
- 
- 
- 
- 
- 
- 
-#line 19 "F:\Keil\Program\C51\Inc\math.h" /0
- 
- #pragma SAVE
- #pragma REGPARMS
- extern char  cabs  (char  val);
- 
- extern int    abs  (int   val);
- 
- extern long  labs  (long  val);
- extern float fabs  (float val);
- extern float sqrt  (float val);
- extern float exp   (float val);
- extern float log   (float val);
- extern float log10 (float val);
- extern float sin   (float val);
- extern float cos   (float val);
- extern float tan   (float val);
- extern float asin  (float val);
- extern float acos  (float val);
- extern float atan  (float val);
- extern float sinh  (float val);
- extern float cosh  (float val);
- extern float tanh  (float val);
- extern float atan2 (float y, float x);
- 
- extern float ceil  (float val);
- extern float floor (float val);
- extern float modf  (float val, float *n);
- extern float fmod  (float x, float y);
- extern float pow   (float x, float y);
- 
- #pragma RESTORE
- 
- 
-#line 4 "main.c" /0
- 
- 
-
  
  
  
@@ -402,6 +266,7 @@
  
  unsigned int  realLoadTime; 
  
+ 
  unsigned char mode;
  } sys_struct;
  
@@ -444,9 +309,29 @@
  }output_struct;
  
  
- sys_struct timetable;
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+#line 3 "Src\main.c" /0
+ 
+
+
+ 
+ 
+ 
+ sys_struct      timetable;
  external_struct externaldata;
- output_struct outputGroup;
+ output_struct   outputGroup;
 
 
  
@@ -479,7 +364,6 @@
  {
  timetable.mode^=1; 
  }
- 
  
  }
  void system_tick_isr(void)  interrupt 1 {
@@ -544,9 +428,6 @@
  TR1=1;
  TR0=1;
  
- 
- 
- 
  while (1) {
  DetectSquareWave();
  
@@ -566,27 +447,29 @@
  
 
  
+ 
  void DetectSquareWave(void) {
  
  
  if(externaldata.ex0_isr_counter==255) {
  
  
- externaldata.finishedFlag=1;
+ 
  
  externaldata.nowFull=timetable.realLoadTime;
  if(externaldata.lastFull>externaldata.nowFull) {  
  externaldata.extwavePeroid=(65535- externaldata.lastFull+externaldata.nowFull)*100.0/255 ;
  } else {  
  externaldata.extwavePeroid=(externaldata.nowFull- externaldata.lastFull )*100.0/255;
- }
+ } 
  externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
  externaldata.lastFull=externaldata.nowFull;
  } else {
- externaldata.finishedFlag=0;
+ 
  }
  }
  void GenerateTarget(void) {
+ unsigned int freq_cache;
  
  
 
@@ -610,7 +493,7 @@
  
  else{
  
- unsigned int freq_cache;
+ 
  if (externaldata.extwaveFreq>=1000)
  {
  freq_cache=externaldata.extwaveFreq/10;
@@ -661,29 +544,29 @@
  };
  const unsigned char code LedSegments[ 23 ]={
  
- 0xC0,	 
- 0xF9,	 
- 0xA4,	 
- 0xB0,	 
- 0x99,	 
- 0x92,	 
- 0x82,	 
- 0xF8,	 
- 0x80,	 
- 0x90,	 
- 0x88,	 
- 0x83,	 
- 0xC6,	 
- 0xA1,	 
- 0x86,	 
- 0x8E,	 
- 0x7F,	 
- 0x82,	 
- 0xC1,	 
- 0xCE,	 
- 0x91,	 
- 0x00,	 
- 0xFF,	 
+ 0x28, 
+ 0xed, 
+ 0x34, 
+ 0xa4, 
+ 0xe1, 
+ 0xa2, 
+ 0x22, 
+ 0xec, 
+ 0x20, 
+ 0xa0, 
+ 0x60, 
+ 0x23, 
+ 0x3a, 
+ 0x25, 
+ 0x32, 
+ 0x72, 
+ 0xdf, 
+ 0x22, 
+ 0x29, 
+ 0x7a, 
+ 0xa1, 
+ 0x0, 
+ 0xff, 
  };
  unsigned char i;
  
@@ -703,20 +586,26 @@
  outputGroup.ledoutput.ledobject[2]=LedDisplaySeg(led[2]);
  
  
- if(timetable.realLoadTime%50==0){
+ if(timetable.realLoadTime%100==0){ 
  
-   P3_0=(1); P3_1=(0); P3_5=(0);;
+   P3_0=(0); P3_1=(1); P3_5=(1);;
   P1=outputGroup.ledoutput.ledobject[0];
+ 
+ Delay_ms(1);
   P1=0xFF; 
  
  
-   P3_0=(0); P3_1=(1); P3_5=(0);;    
+   P3_0=(1); P3_1=(0); P3_5=(1);;    
   P1=outputGroup.ledoutput.ledobject[1];
+ 
+ Delay_ms(1);
   P1=0xFF;
  
  
-   P3_0=(0); P3_1=(0); P3_5=(1);;
+   P3_0=(1); P3_1=(1); P3_5=(0);;
   P1=outputGroup.ledoutput.ledobject[2];
+ 
+ Delay_ms(1);
   P1=0xFF;
  }
  
@@ -787,13 +676,13 @@
  
  void Delay_ms(const unsigned char wait_time){
  
- unsigned char i;
- unsigned int  lastTimeStamp=timetable.realLoadTime;
+ unsigned int i,j;
+ 
  
  for(i=0;i<wait_time;i++ ){
  
- while((timetable.realLoadTime- lastTimeStamp)<10);
  
+ for(j=0;j<1000;j++);
  }
  }
  
@@ -807,16 +696,16 @@
  unsigned StdCVersion;
  
  };
- struct __we_are_history__ code Logging={"May 15 2016",
-  "15:33:20",
-  "main.c",
-  459,
+ struct __we_are_history__ code Logging={"May 17 2016",
+  "00:06:39",
+  "Src\\main.c",
+  379,
   1,
  };
  
  
  
-#line 465 "main.c" /1
+#line 385 "Src\main.c" /1
  
  
  
@@ -830,4 +719,4 @@
  
  
  
-#line 477 "main.c" /0
+#line 397 "Src\main.c" /0
