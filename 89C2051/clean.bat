@@ -1,2 +1,2 @@
-rm *.bak
+rm -r *.bak
 rm Objects -rf

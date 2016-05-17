@@ -261,13 +261,13 @@
  
  
  
- 
+ enum modelist {mode_music=0,mode_freq=1,};
  typedef struct __internal_time_data__ {
  
  unsigned int  realLoadTime; 
  
  
- unsigned char mode;
+ enum modelist mode;
  } sys_struct;
  
  typedef struct __internal_music_data__ {
@@ -299,7 +299,7 @@
  typedef struct __ledseg_struct__{
  unsigned char ledString[3];
  unsigned char ledobject[3];
- 
+ unsigned char chosedGroupindex;
  
  }ledseg;
  
@@ -307,13 +307,6 @@
  music_struct musicoutput;
  ledseg 		 ledoutput;
  }output_struct;
- 
- 
- 
- 
- 
- 
- 
  
  
  
@@ -345,6 +338,7 @@
  void SquareFrequency2OutptFreq (unsigned int inputfreq);
  
  void Delay_ms(const unsigned char wait_time);
+ void LedScanLine(unsigned char index);
 
 
  
@@ -429,7 +423,18 @@
  TR0=1;
  
  while (1) {
- DetectSquareWave();
+ 
+#line 111 "Src\main.c" /1
+ 
+ 
+ 
+#line 114 "Src\main.c" /0
+ 
+ externaldata.extwavePeroid=1000;         
+ externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
+ 
+ timetable.mode=0;
+ 
  
  
  
@@ -483,9 +488,8 @@
  
  
  outputGroup.ledoutput.ledString[0]='0'+outputGroup.musicoutput.musicZoneLevel;
- outputGroup.ledoutput.ledString[1]='P';
+ outputGroup.ledoutput.ledString[1]='.';
  outputGroup.ledoutput.ledString[2]='0'+outputGroup.musicoutput.musicZoneID;
- 
  
  }
 
@@ -580,35 +584,74 @@
  
  }
  
- void LedDisplayLoop(unsigned	char led[3]){
+ void LedDisplayLoop(const unsigned char led[3]){
  outputGroup.ledoutput.ledobject[0]=LedDisplaySeg(led[0]);
  outputGroup.ledoutput.ledobject[1]=LedDisplaySeg(led[1]);
  outputGroup.ledoutput.ledobject[2]=LedDisplaySeg(led[2]);
  
  
- if(timetable.realLoadTime%100==0){ 
  
-   P3_0=(0); P3_1=(1); P3_5=(1);;
+ 
+ 
+ if(timetable.realLoadTime%50==0){ 
+ 
+
+
+
+
+
+
+
+
+
+ 
+ 
+ switch(outputGroup.ledoutput.chosedGroupindex){
+ case 0: 
+   P3_0=!(1); P3_1=!(1); P3_5=!(1);; 
   P1=outputGroup.ledoutput.ledobject[0];
+   P3_0=!(0); P3_1=!(1); P3_5=!(1);;
  
- Delay_ms(1);
-  P1=0xFF; 
+ outputGroup.ledoutput.chosedGroupindex=1;
+ break;
+ case 1: 
+   P3_0=!(1); P3_1=!(1); P3_5=!(1);;
  
- 
-   P3_0=(1); P3_1=(0); P3_5=(1);;    
   P1=outputGroup.ledoutput.ledobject[1];
+   P3_0=!(1); P3_1=!(0); P3_5=!(1);;
+ outputGroup.ledoutput.chosedGroupindex=2;
+ break;
+ case 2:                
+   P3_0=!(1); P3_1=!(1); P3_5=!(1);;
  
- Delay_ms(1);
-  P1=0xFF;
- 
- 
-   P3_0=(1); P3_1=(1); P3_5=(0);;
   P1=outputGroup.ledoutput.ledobject[2];
+   P3_0=!(1); P3_1=!(1); P3_5=!(0);;
+ outputGroup.ledoutput.chosedGroupindex=0;
+ break;
+ default:
+   P3_0=!(0); P3_1=!(0); P3_5=!(0);;
+  P1=0x32; 
+ break;
+ }   
  
- Delay_ms(1);
-  P1=0xFF;
+ 
+ 
+ 
+ 
  }
  
+ }
+ 
+ void LedScanLine(unsigned char index){
+ switch(index){
+ case 0:P3_0=!(0); P3_1=!(1); P3_5=!(1);;
+ break;       
+ case 1:P3_0=!(1); P3_1=!(0); P3_5=!(1);;
+ break;
+ case 2:P3_0=!(1); P3_1=!(1); P3_5=!(0);;
+ break;
+ default:break;
+ }
  }
  
  
@@ -660,8 +703,9 @@
  638, 
  568, 
  506, 
+ 
  };
- for (i=21;i>=0;i--){
+ for (i=21-1;i>=0;i--){
  
  if(inputfreq<=MusicRhythm[i]){
  
@@ -670,8 +714,8 @@
  }
  }
  outputGroup.musicoutput.musicZone     =i;
- outputGroup.musicoutput.musicZoneLevel=i/7;
- outputGroup.musicoutput.musicZoneID   =i%7;
+ outputGroup.musicoutput.musicZoneLevel=i/7 +1;
+ outputGroup.musicoutput.musicZoneID   =i%7 +1;
  }
  
  void Delay_ms(const unsigned char wait_time){
@@ -697,15 +741,15 @@
  
  };
  struct __we_are_history__ code Logging={"May 17 2016",
-  "00:06:39",
+  "22:15:30",
   "Src\\main.c",
-  379,
+  428,
   1,
  };
  
  
  
-#line 385 "Src\main.c" /1
+#line 434 "Src\main.c" /1
  
  
  
@@ -719,4 +763,4 @@
  
  
  
-#line 397 "Src\main.c" /0
+#line 446 "Src\main.c" /0

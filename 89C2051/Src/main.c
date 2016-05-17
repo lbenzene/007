@@ -22,6 +22,7 @@ unsigned MusicRegisterFlash(void);
 void SquareFrequency2OutptFreq (unsigned int inputfreq);
 
 void Delay_ms(const unsigned char wait_time);
+void LedScanLine(unsigned char index);
 /*=============================================================================
 =============================Interrupt part====================================
 =============================================================================*/
@@ -106,7 +107,16 @@ void main (void) {
     TR0=1;
 
     while (1) {
+	#ifndef DEBUG_LED_DISPLAY
         DetectSquareWave();
+        //set Extwave For Partial Examine Function
+	#else
+		//During Debug Test ,check led display and music ferq generate.
+		externaldata.extwavePeroid=1000;        //just 1Khz
+		externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
+        
+        timetable.mode=MODE_Music;
+	#endif
         //release Input sqrtwave info
 
         //Generate Output Data
@@ -160,9 +170,8 @@ void GenerateTarget(void) {
     	//        Left--------->Right
 		//LEDstring   0   1   2
     	outputGroup.ledoutput.ledString[0]='0'+outputGroup.musicoutput.musicZoneLevel;
-    	outputGroup.ledoutput.ledString[1]='P';
+    	outputGroup.ledoutput.ledString[1]='.';
     	outputGroup.ledoutput.ledString[2]='0'+outputGroup.musicoutput.musicZoneID;
-    	
     	
     }
 	/*
@@ -257,36 +266,75 @@ unsigned char LedDisplaySeg(const unsigned char ledstr) {
     
 }
 
- void LedDisplayLoop(unsigned	char led[3]){
+ void LedDisplayLoop(const unsigned char led[3]){
  	outputGroup.ledoutput.ledobject[0]=LedDisplaySeg(led[0]);
  	outputGroup.ledoutput.ledobject[1]=LedDisplaySeg(led[1]);
  	outputGroup.ledoutput.ledobject[2]=LedDisplaySeg(led[2]);
  	
  	//Judge if Condition is Satisfied,Flash
- 	if(timetable.realLoadTime%100==0){//10ms
- 		//scan line 0,Choose ledgroup_1
-        LED_SCAN_Array(0,1,1);
-	 	LED_DATA=outputGroup.ledoutput.ledobject[0];
-        
-        Delay_ms(1);
-	 	LED_DATA=LEDSEG_NONE;//remove Left shadow
+    //judge  outputGroup.ledoutput.chosedGroupindex
+    //#define FURTURE_CODE_TEST
+    
+ 	if(timetable.realLoadTime%50==0){//10ms
+    
+/*         if(outputGroup.ledoutput.chosedGroupindex>=2){
+            outputGroup.ledoutput.chosedGroupindex=0;
+        }else{
+            outputGroup.ledoutput.chosedGroupindex++;
+        }
+        //LED_DATA=LEDSEG_NONE;
+        LED_SCAN_Array(1,1,1);//close BitChoose
+        LED_DATA=outputGroup.ledoutput.ledobject[outputGroup.ledoutput.chosedGroupindex];
+        LedScanLine(outputGroup.ledoutput.chosedGroupindex);
+         */
+      
+        switch(outputGroup.ledoutput.chosedGroupindex){
+            case 0://line 0                
+                LED_SCAN_Array(1,1,1);//close BitChoose
+                LED_DATA=outputGroup.ledoutput.ledobject[0];
+                LED_SCAN_Array(0,1,1);
+                //next scan line
+                outputGroup.ledoutput.chosedGroupindex=1;
+                break;
+            case 1://line1                
+                LED_SCAN_Array(1,1,1);
+                
+                LED_DATA=outputGroup.ledoutput.ledobject[1];
+                LED_SCAN_Array(1,0,1);
+                outputGroup.ledoutput.chosedGroupindex=2;
+                break;
+            case 2:                
+                LED_SCAN_Array(1,1,1);
+                
+                LED_DATA=outputGroup.ledoutput.ledobject[2];
+                LED_SCAN_Array(1,1,0);
+                outputGroup.ledoutput.chosedGroupindex=0;
+                break;
+            default:
+                LED_SCAN_Array(0,0,0);
+                LED_DATA=0x32;//StandsFor "Error"s E
+                break;
+        }   
+    
 	 	
-	 	//scan line 1
-        LED_SCAN_Array(1,0,1);   //
-	 	LED_DATA=outputGroup.ledoutput.ledobject[1];
+
         
-        Delay_ms(1);
-	 	LED_DATA=LEDSEG_NONE;
-	 	
-	 	//scan line 2
-        LED_SCAN_Array(1,1,0);
-	 	LED_DATA=outputGroup.ledoutput.ledobject[2];
-        
-        Delay_ms(1);
-        LED_DATA=LEDSEG_NONE;
-	 }
+
+	}
  	
- }
+}
+ 
+void LedScanLine(unsigned char index){
+     switch(index){
+        case 0:LED_SCAN_Array(0,1,1);
+            break;       
+        case 1:LED_SCAN_Array(1,0,1);
+            break;
+        case 2:LED_SCAN_Array(1,1,0);
+            break;
+        default:break;
+    }
+}
 //-----------------------------------
 //----------Music part---------------
 //-----------------------------------
@@ -315,30 +363,31 @@ void SquareFrequency2OutptFreq(unsigned int inputfreq){
 	unsigned char i;
 	unsigned int code MusicRhythm[ MUSIC_RYTHM_LEN ]= {
     //hard code to programe memory array;
-    //period,Description
-	    3822,// 低1Do
-	    3405,// 低2Re
-	    3034,// 低3Mi
-	    2864,// 低4Fa
-	    2551,// 低5So
-	    2272,// 低6La
-	    2024,// 低7Si
-	    1911,// 中1Do
-	    1703,// 中2Re
-	    1517,// 中3Mi
-	    1432,// 中4Fa
-	    1275,// 中5So
-	    1136,// 中6La
-	    1012,// 中7Si
-	    955,//  高1Do
-	    851,//  高2Re
-	    758,//  高3Mi
-	    716,//  高4Fa
-	    638,//  高5So
-	    568,//  高6La
-	    506,//  高7Si
+    //period,MusicZone,index 
+        3822,// 低1Do	0
+        3405,// 低2Re	1
+        3034,// 低3Mi	2
+        2864,// 低4Fa	3
+        2551,// 低5So	4
+        2272,// 低6La	5
+        2024,// 低7Si	6
+        1911,// 中1Do	7
+        1703,// 中2Re	8
+        1517,// 中3Mi	9
+        1432,// 中4Fa	10
+        1275,// 中5So	11
+        1136,// 中6La	12
+        1012,// 中7Si	13
+        955,//  高1Do	14
+        851,//  高2Re	15
+        758,//  高3Mi	16
+        716,//  高4Fa	17
+        638,//  高5So	18
+        568,//  高6La	19
+        506,//  高7Si	20
+
 	};
-	for (i=MUSIC_RYTHM_LEN;i>=0;i--){
+	for (i=MUSIC_RYTHM_LEN-1;i>=0;i--){
 		//From Period Small ->Large
 		if(inputfreq<=MusicRhythm[i]){
 			//set out put to the i index data
@@ -347,8 +396,8 @@ void SquareFrequency2OutptFreq(unsigned int inputfreq){
 		}
 	}
 	outputGroup.musicoutput.musicZone     =i;
-	outputGroup.musicoutput.musicZoneLevel=i/MUSIC_ZONE_LEVEL_MAX;
-	outputGroup.musicoutput.musicZoneID   =i%MUSIC_ZONE_LEVEL_MAX;
+	outputGroup.musicoutput.musicZoneLevel=i/MUSIC_ZONE_LEVEL_MAX +1;
+	outputGroup.musicoutput.musicZoneID   =i%MUSIC_ZONE_LEVEL_MAX +1;
 }
 
 void Delay_ms(const unsigned char wait_time){

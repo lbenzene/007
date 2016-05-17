@@ -22,9 +22,9 @@
 #define LED_SCAN_Line0          P3_0  //low
 #define LED_SCAN_Line1          P3_1  //mid
 #define LED_SCAN_Line2          P3_5  //high
-#define LED_SCAN_Array(a,b,c)   LED_SCAN_Line0=(a);\
-                                LED_SCAN_Line1=(b);\
-                                LED_SCAN_Line2=(c);
+#define LED_SCAN_Array(a,b,c)   LED_SCAN_Line0=!(a);\
+                                LED_SCAN_Line1=!(b);\
+                                LED_SCAN_Line2=!(c);
 
 #define Key_Port_Line           P3_3
 
@@ -42,13 +42,13 @@
 #define MODE_Music 				0
 #define MODE_Freq  				1
 #define LEDSEG_NONE				0xFF
-
+enum modelist {mode_music=MODE_Music,mode_freq=MODE_Freq,};
 typedef struct __internal_time_data__ {
    
     unsigned int  realLoadTime;//16bit
     
     //for easy to use in oter application
-    unsigned char mode;
+    enum modelist mode;
 } sys_struct;
 
 typedef struct __internal_music_data__ {
@@ -80,7 +80,7 @@ typedef struct __internal_exint0_data__ {
 typedef struct __ledseg_struct__{
 	unsigned char ledString[3];
     unsigned char ledobject[3];
-
+    unsigned char chosedGroupindex;
     
 }ledseg;
 //led output
@@ -88,13 +88,6 @@ typedef struct __output__{
     music_struct musicoutput;
     ledseg 		 ledoutput;
 }output_struct;
-
-
-
-
-
-
-
 
 
 
