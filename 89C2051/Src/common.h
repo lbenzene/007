@@ -2,9 +2,6 @@
 #define __COMMON_H__
 
 
-#define DEBUG_LED_DISPLAY
-
-
 
 /*
 *Port Define
@@ -32,7 +29,7 @@
 #define SystemTickCounterReg    TL0
 #define OneMilisecondCostSysTick 10
 
-#define MUSIC_Port_line         P3_0
+#define MUSIC_Port_line         P3_7
 #define MUSIC_SWITCH            TR1
 #define MUSIC_RYTHM_LEN 		21
 #define MUSIC_ZONE_LEVEL_MAX	7

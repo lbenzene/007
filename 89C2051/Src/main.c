@@ -5,6 +5,11 @@
 *=============================Main.c==========================================
 *=============================================================================*/
 #define PLEASE_LOG_IT
+#define DEBUG_LED_DISPLAY
+
+
+
+
 
 sys_struct      timetable;
 external_struct externaldata;
@@ -15,7 +20,7 @@ output_struct   outputGroup;
 void DetectSquareWave(void);
 void GenerateTarget(void);
 
-void          LedDisplayLoop   (unsigned   char led[3]);
+void          LedDisplayLoop   (void);//unsigned   char led[3]
 unsigned char LedDisplaySeg(const unsigned char ledstr);
 
 unsigned MusicRegisterFlash(void);
@@ -114,7 +119,7 @@ void main (void) {
 		//During Debug Test ,check led display and music ferq generate.
 		externaldata.extwavePeroid=1000;        //just 1Khz
 		externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
-        
+        externaldata.finishedFlag=1;
         timetable.mode=MODE_Music;
 	#endif
         //release Input sqrtwave info
@@ -122,13 +127,15 @@ void main (void) {
         //Generate Output Data
         //1.calculate the target music freq for out ;
         //2.Confirm the Figure to display;
-        GenerateTarget();
+        if(externaldata.finishedFlag){
+            GenerateTarget();
 
-        //in interrupt music freq will change
-        MusicRegisterFlash();
-        
-        //led flash 3 times
-        LedDisplayLoop(outputGroup.ledoutput.ledString);
+            //in interrupt music freq will change
+            MusicRegisterFlash();
+            
+            //led flash 3 times
+            LedDisplayLoop();//outputGroup.ledoutput.ledString
+        }
     }
 }
 
@@ -152,7 +159,7 @@ void DetectSquareWave(void) {
         externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
         externaldata.lastFull=externaldata.nowFull;
     } else {
-        //externaldata.finishedFlag=0;
+        externaldata.finishedFlag=0;
     }
 }
 void GenerateTarget(void) {
@@ -194,6 +201,9 @@ void GenerateTarget(void) {
 		
 		
 	}
+    outputGroup.ledoutput.ledobject[0]=LedDisplaySeg(outputGroup.ledoutput.ledString[0]);
+ 	outputGroup.ledoutput.ledobject[1]=LedDisplaySeg(outputGroup.ledoutput.ledString[1]);
+ 	outputGroup.ledoutput.ledobject[2]=LedDisplaySeg(outputGroup.ledoutput.ledString[2]);
 
 }
 //-----------------------------------
@@ -266,16 +276,14 @@ unsigned char LedDisplaySeg(const unsigned char ledstr) {
     
 }
 
- void LedDisplayLoop(const unsigned char led[3]){
- 	outputGroup.ledoutput.ledobject[0]=LedDisplaySeg(led[0]);
- 	outputGroup.ledoutput.ledobject[1]=LedDisplaySeg(led[1]);
- 	outputGroup.ledoutput.ledobject[2]=LedDisplaySeg(led[2]);
+ void LedDisplayLoop(void){
+ 	
  	
  	//Judge if Condition is Satisfied,Flash
     //judge  outputGroup.ledoutput.chosedGroupindex
     //#define FURTURE_CODE_TEST
     
- 	if(timetable.realLoadTime%50==0){//10ms
+ 	if(timetable.realLoadTime%10==0){//10ms
     
 /*         if(outputGroup.ledoutput.chosedGroupindex>=2){
             outputGroup.ledoutput.chosedGroupindex=0;

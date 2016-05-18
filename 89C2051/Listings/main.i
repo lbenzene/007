@@ -222,9 +222,6 @@
  
  
  
- 
- 
- 
 
 
 
@@ -322,6 +319,11 @@
  
  
  
+ 
+ 
+ 
+ 
+ 
  sys_struct      timetable;
  external_struct externaldata;
  output_struct   outputGroup;
@@ -331,7 +333,7 @@
  void DetectSquareWave(void);
  void GenerateTarget(void);
  
- void          LedDisplayLoop   (unsigned   char led[3]);
+ void          LedDisplayLoop   (void); 
  unsigned char LedDisplaySeg(const unsigned char ledstr);
  
  unsigned MusicRegisterFlash(void);
@@ -374,7 +376,7 @@
  TH1=outputGroup.musicoutput.regCache.reg_8bit.reg_high;
  TL1=outputGroup.musicoutput.regCache.reg_8bit.reg_low ;
  
-  P3_0^=1; 
+  P3_7^=1; 
  }
 
 
@@ -424,15 +426,15 @@
  
  while (1) {
  
-#line 111 "Src\main.c" /1
+#line 116 "Src\main.c" /1
  
  
  
-#line 114 "Src\main.c" /0
+#line 119 "Src\main.c" /0
  
  externaldata.extwavePeroid=1000;         
  externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
- 
+ externaldata.finishedFlag=1;
  timetable.mode=0;
  
  
@@ -440,13 +442,15 @@
  
  
  
+ if(externaldata.finishedFlag){
  GenerateTarget();
  
  
  MusicRegisterFlash();
  
  
- LedDisplayLoop(outputGroup.ledoutput.ledString);
+ LedDisplayLoop(); 
+ }
  }
  }
  
@@ -470,7 +474,7 @@
  externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
  externaldata.lastFull=externaldata.nowFull;
  } else {
- 
+ externaldata.finishedFlag=0;
  }
  }
  void GenerateTarget(void) {
@@ -512,6 +516,9 @@
  
  
  }
+ outputGroup.ledoutput.ledobject[0]=LedDisplaySeg(outputGroup.ledoutput.ledString[0]);
+ outputGroup.ledoutput.ledobject[1]=LedDisplaySeg(outputGroup.ledoutput.ledString[1]);
+ outputGroup.ledoutput.ledobject[2]=LedDisplaySeg(outputGroup.ledoutput.ledString[2]);
  
  }
  
@@ -584,16 +591,14 @@
  
  }
  
- void LedDisplayLoop(const unsigned char led[3]){
- outputGroup.ledoutput.ledobject[0]=LedDisplaySeg(led[0]);
- outputGroup.ledoutput.ledobject[1]=LedDisplaySeg(led[1]);
- outputGroup.ledoutput.ledobject[2]=LedDisplaySeg(led[2]);
+ void LedDisplayLoop(void){
  
  
  
  
  
- if(timetable.realLoadTime%50==0){ 
+ 
+ if(timetable.realLoadTime%10==0){ 
  
 
 
@@ -740,16 +745,16 @@
  unsigned StdCVersion;
  
  };
- struct __we_are_history__ code Logging={"May 17 2016",
-  "22:15:30",
+ struct __we_are_history__ code Logging={"May 18 2016",
+  "13:59:31",
   "Src\\main.c",
-  428,
+  436,
   1,
  };
  
  
  
-#line 434 "Src\main.c" /1
+#line 442 "Src\main.c" /1
  
  
  
@@ -763,4 +768,4 @@
  
  
  
-#line 446 "Src\main.c" /0
+#line 454 "Src\main.c" /0

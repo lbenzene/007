@@ -129,7 +129,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGTP51</Key>
-          <Name>(98=-1,-1,-1,-1,0)(83=152,594,350,677,1)(85=-1,-1,-1,-1,0)(80=-1,-1,-1,-1,0)(91=190,388,390,653,0)(92=165,121,365,386,0)</Name>
+          <Name>(98=-1,-1,-1,-1,0)(83=0,547,198,630,1)(85=101,383,299,466,0)(80=-1,-1,-1,-1,0)(91=190,388,390,653,0)(92=165,121,365,386,0)</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -158,6 +158,26 @@
           <count>2</count>
           <WinNumber>1</WinNumber>
           <ItemText>timetable</ItemText>
+        </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>P3_0</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>P3_1</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>P3_5</ItemText>
+        </Ww>
+        <Ww>
+          <count>6</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>timetable.realLoadTime%1000</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
