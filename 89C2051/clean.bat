@@ -1,2 +1,2 @@
-rm -r *.bak
+del /f /s /q *.bak
 rm Objects -rf

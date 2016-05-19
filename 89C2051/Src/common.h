@@ -3,25 +3,29 @@
 
 
 
-/*
-*Port Define
+/*==========================================
+*=================Port Define===============
+*===========================================
 *P1.0-P1.7 LEDData
-*
-* P3.5 LED bit High
-* P3.1         Mid
-* P3.0         Low
-*
- */
+* //----------------
+* P3.4 LED bit High
+* P3.5         Mid
+* P3.7         Low
+* ------------------
+* Music Port
+* P3.7
+*--------------------
+*/
 
 #define OscillatorFreq      12*1000*1000
 #define LED_DATA 				P1
 							  //P1 port P1.0-P1.7,
-#define LED_SCAN_Line0          P3_0  //low
-#define LED_SCAN_Line1          P3_1  //mid
-#define LED_SCAN_Line2          P3_5  //high
-#define LED_SCAN_Array(a,b,c)   LED_SCAN_Line0=!(a);\
-                                LED_SCAN_Line1=!(b);\
-                                LED_SCAN_Line2=!(c);
+#define LED_SCAN_Line0          P3_4  
+#define LED_SCAN_Line1          P3_5  
+#define LED_SCAN_Line2          P3_7  
+#define LED_SCAN_Array(a,b,c)   LED_SCAN_Line0=(a);\
+                                LED_SCAN_Line1=(b);\
+                                LED_SCAN_Line2=(c);
 
 #define Key_Port_Line           P3_3
 
@@ -29,7 +33,7 @@
 #define SystemTickCounterReg    TL0
 #define OneMilisecondCostSysTick 10
 
-#define MUSIC_Port_line         P3_7
+#define MUSIC_Port_line         P3_0
 #define MUSIC_SWITCH            TR1
 #define MUSIC_RYTHM_LEN 		21
 #define MUSIC_ZONE_LEVEL_MAX	7

@@ -230,6 +230,10 @@
 
 
 
+
+
+
+
  
  
  
@@ -376,7 +380,7 @@
  TH1=outputGroup.musicoutput.regCache.reg_8bit.reg_high;
  TL1=outputGroup.musicoutput.regCache.reg_8bit.reg_low ;
  
-  P3_7^=1; 
+  P3_0^=1; 
  }
 
 
@@ -447,13 +451,12 @@
  
  
  MusicRegisterFlash();
- 
- 
+ }
  LedDisplayLoop(); 
  }
  }
- }
  
+
 
  
  
@@ -477,6 +480,10 @@
  externaldata.finishedFlag=0;
  }
  }
+ 
+
+
+ 
  void GenerateTarget(void) {
  unsigned int freq_cache;
  
@@ -598,8 +605,8 @@
  
  
  
- if(timetable.realLoadTime%10==0){ 
  
+ if(1){
 
 
 
@@ -613,28 +620,28 @@
  
  switch(outputGroup.ledoutput.chosedGroupindex){
  case 0: 
-   P3_0=!(1); P3_1=!(1); P3_5=!(1);; 
+   P3_4=(1); P3_5=(1); P3_7=(1);; 
   P1=outputGroup.ledoutput.ledobject[0];
-   P3_0=!(0); P3_1=!(1); P3_5=!(1);;
+   P3_4=(0); P3_5=(1); P3_7=(1);;
  
  outputGroup.ledoutput.chosedGroupindex=1;
  break;
  case 1: 
-   P3_0=!(1); P3_1=!(1); P3_5=!(1);;
+   P3_4=(1); P3_5=(1); P3_7=(1);;
  
   P1=outputGroup.ledoutput.ledobject[1];
-   P3_0=!(1); P3_1=!(0); P3_5=!(1);;
+   P3_4=(1); P3_5=(0); P3_7=(1);;
  outputGroup.ledoutput.chosedGroupindex=2;
  break;
  case 2:                
-   P3_0=!(1); P3_1=!(1); P3_5=!(1);;
+   P3_4=(1); P3_5=(1); P3_7=(1);;
  
   P1=outputGroup.ledoutput.ledobject[2];
-   P3_0=!(1); P3_1=!(1); P3_5=!(0);;
+   P3_4=(1); P3_5=(1); P3_7=(0);;
  outputGroup.ledoutput.chosedGroupindex=0;
  break;
  default:
-   P3_0=!(0); P3_1=!(0); P3_5=!(0);;
+   P3_4=(0); P3_5=(0); P3_7=(0);;
   P1=0x32; 
  break;
  }   
@@ -649,11 +656,11 @@
  
  void LedScanLine(unsigned char index){
  switch(index){
- case 0:P3_0=!(0); P3_1=!(1); P3_5=!(1);;
+ case 0:P3_4=(0); P3_5=(1); P3_7=(1);;
  break;       
- case 1:P3_0=!(1); P3_1=!(0); P3_5=!(1);;
+ case 1:P3_4=(1); P3_5=(0); P3_7=(1);;
  break;
- case 2:P3_0=!(1); P3_1=!(1); P3_5=!(0);;
+ case 2:P3_4=(1); P3_5=(1); P3_7=(0);;
  break;
  default:break;
  }
@@ -745,16 +752,16 @@
  unsigned StdCVersion;
  
  };
- struct __we_are_history__ code Logging={"May 18 2016",
-  "13:59:31",
+ struct __we_are_history__ code Logging={"May 19 2016",
+  "17:24:32",
   "Src\\main.c",
-  436,
+  439,
   1,
  };
  
  
  
-#line 442 "Src\main.c" /1
+#line 445 "Src\main.c" /1
  
  
  
@@ -768,4 +775,4 @@
  
  
  
-#line 454 "Src\main.c" /0
+#line 457 "Src\main.c" /0

@@ -132,14 +132,13 @@ void main (void) {
 
             //in interrupt music freq will change
             MusicRegisterFlash();
-            
-            //led flash 3 times
-            LedDisplayLoop();//outputGroup.ledoutput.ledString
         }
+        LedDisplayLoop();//outputGroup.ledoutput.ledString
     }
 }
 
 /*=============================================================================
+*===========================Front   Part=======================================
 =============================================================================*/
 #define FUllCountValue 255
 void DetectSquareWave(void) {
@@ -162,6 +161,10 @@ void DetectSquareWave(void) {
         externaldata.finishedFlag=0;
     }
 }
+
+/*=============================================================================
+*===========================GenerateTarget   Part==============================
+=============================================================================*/
 void GenerateTarget(void) {
     unsigned int freq_cache;
 	//Only Operate in VariablesLevel
@@ -283,8 +286,8 @@ unsigned char LedDisplaySeg(const unsigned char ledstr) {
     //judge  outputGroup.ledoutput.chosedGroupindex
     //#define FURTURE_CODE_TEST
     
- 	if(timetable.realLoadTime%10==0){//10ms
-    
+ 	//if(timetable.realLoadTime%10==0){//10ms
+    if(1){
 /*         if(outputGroup.ledoutput.chosedGroupindex>=2){
             outputGroup.ledoutput.chosedGroupindex=0;
         }else{
