@@ -7,10 +7,6 @@
 #define PLEASE_LOG_IT
 #define DEBUG_LED_DISPLAY
 
-
-
-
-
 sys_struct      timetable;
 external_struct externaldata;
 output_struct   outputGroup;
@@ -37,7 +33,7 @@ void ex0_isr (void)         interrupt IE0_VECTOR {
 }
 void ex1_isr_pushkey(void)  interrupt IE1_VECTOR{
     //External Key push made
-    //change     timetable.mode
+    //change timetable.mode
     
     //judge Vailid Press Key
     
@@ -110,17 +106,19 @@ void main (void) {
     //timeTable
     TR1=1;
     TR0=1;
-
+    //-------------Mode Init--------------------------
+    timetable.mode=MODE_Freq;
+    //------------------------------------------------
     while (1) {
 	#ifndef DEBUG_LED_DISPLAY
         DetectSquareWave();
         //set Extwave For Partial Examine Function
 	#else
 		//During Debug Test ,check led display and music ferq generate.
-		externaldata.extwavePeroid=1000;        //just 1Khz
+		externaldata.extwavePeroid=1234;        //just 1Khz
 		externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
         externaldata.finishedFlag=1;
-        timetable.mode=MODE_Music;
+        timetable.mode=MODE_Freq;
 	#endif
         //release Input sqrtwave info
 
@@ -132,6 +130,7 @@ void main (void) {
 
             //in interrupt music freq will change
             MusicRegisterFlash();
+            externaldata.finishedFlag=0;
         }
         LedDisplayLoop();//outputGroup.ledoutput.ledString
     }
@@ -147,7 +146,7 @@ void DetectSquareWave(void) {
     if(externaldata.ex0_isr_counter==FUllCountValue) {
 
         //Finished FUllCountValue Flag
-        //externaldata.finishedFlag=1;
+        externaldata.finishedFlag=1;
         
         externaldata.nowFull=timetable.realLoadTime;
         if(externaldata.lastFull>externaldata.nowFull) { //just between the systicker's Zero
@@ -158,7 +157,7 @@ void DetectSquareWave(void) {
         externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
         externaldata.lastFull=externaldata.nowFull;
     } else {
-        externaldata.finishedFlag=0;
+        //externaldata.finishedFlag=0;
     }
 }
 
@@ -335,6 +334,7 @@ unsigned char LedDisplaySeg(const unsigned char ledstr) {
  	
 }
  
+/*
 void LedScanLine(unsigned char index){
      switch(index){
         case 0:LED_SCAN_Array(0,1,1);
@@ -346,11 +346,13 @@ void LedScanLine(unsigned char index){
         default:break;
     }
 }
+*/
 //-----------------------------------
 //----------Music part---------------
 //-----------------------------------
 unsigned MusicRegisterFlash(void) {
     unsigned int _half_period;
+    unsigned int TC;
     //use musicoutput.targetPeriod to set TH1,TL1 in next circle
     if(MODE_Music==timetable.mode)
         MUSIC_SWITCH=1;
@@ -363,7 +365,16 @@ unsigned MusicRegisterFlash(void) {
 //    #error //Left reg Configure
     //use data from outputGroup
     _half_period=outputGroup.musicoutput.targetPeriod/2;
-    outputGroup.musicoutput.regCache.reg_16bit= 65536- (OscillatorFreq/1000000 )*_half_period /12;
+    //TC=65535-_half_period;
+    //TC= (65535-(OscillatorFreq/1000000)/12*_half_period);
+    //actually, equals to TC=65535-1*_half_period;
+    /*                             ^
+    *                              |  
+    *------Warning----Here---------|---
+    *C51Compiler shows a bug when  | this C format description  used huge Constant.
+    *
+    */
+    outputGroup.musicoutput.regCache.reg_16bit=65535-_half_period;
     //music Reg TC;
     
     return MODE_Music;

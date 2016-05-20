@@ -276,8 +276,9 @@
  unsigned char musicZone,musicZoneLevel,musicZoneID;
  union{
  struct __reg_low_high__{
- unsigned char reg_low;  
  unsigned char reg_high; 
+ unsigned char reg_low;  
+ 
  
  
  
@@ -320,10 +321,6 @@
  
 
 
- 
- 
- 
- 
  
  
  
@@ -428,18 +425,20 @@
  TR1=1;
  TR0=1;
  
+ timetable.mode=1;
+ 
  while (1) {
  
-#line 116 "Src\main.c" /1
+#line 114 "Src\main.c" /1
  
  
  
-#line 119 "Src\main.c" /0
+#line 117 "Src\main.c" /0
  
- externaldata.extwavePeroid=1000;         
+ externaldata.extwavePeroid=1234;         
  externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
  externaldata.finishedFlag=1;
- timetable.mode=0;
+ timetable.mode=1;
  
  
  
@@ -451,6 +450,7 @@
  
  
  MusicRegisterFlash();
+ externaldata.finishedFlag=0;
  }
  LedDisplayLoop(); 
  }
@@ -466,7 +466,7 @@
  if(externaldata.ex0_isr_counter==255) {
  
  
- 
+ externaldata.finishedFlag=1;
  
  externaldata.nowFull=timetable.realLoadTime;
  if(externaldata.lastFull>externaldata.nowFull) {  
@@ -477,7 +477,7 @@
  externaldata.extwaveFreq=1e6/externaldata.extwavePeroid;
  externaldata.lastFull=externaldata.nowFull;
  } else {
- externaldata.finishedFlag=0;
+ 
  }
  }
  
@@ -654,22 +654,25 @@
  
  }
  
- void LedScanLine(unsigned char index){
- switch(index){
- case 0:P3_4=(0); P3_5=(1); P3_7=(1);;
- break;       
- case 1:P3_4=(1); P3_5=(0); P3_7=(1);;
- break;
- case 2:P3_4=(1); P3_5=(1); P3_7=(0);;
- break;
- default:break;
- }
- }
+
+
+
+
+
+
+
+
+
+
+
+
+ 
  
  
  
  unsigned MusicRegisterFlash(void) {
  unsigned int _half_period;
+ unsigned int TC;
  
  if(0==timetable.mode)
   TR1=1;
@@ -682,7 +685,16 @@
  
  
  _half_period=outputGroup.musicoutput.targetPeriod/2;
- outputGroup.musicoutput.regCache.reg_16bit= 65536- (12*1000*1000/1000000 )*_half_period /12;
+ 
+ 
+ 
+
+
+
+
+
+ 
+ outputGroup.musicoutput.regCache.reg_16bit=65535-_half_period;
  
  
  return 0;
@@ -752,16 +764,16 @@
  unsigned StdCVersion;
  
  };
- struct __we_are_history__ code Logging={"May 19 2016",
-  "17:24:32",
+ struct __we_are_history__ code Logging={"May 20 2016",
+  "12:46:00",
   "Src\\main.c",
-  439,
+  450,
   1,
  };
  
  
  
-#line 445 "Src\main.c" /1
+#line 456 "Src\main.c" /1
  
  
  
@@ -775,4 +787,4 @@
  
  
  
-#line 457 "Src\main.c" /0
+#line 468 "Src\main.c" /0

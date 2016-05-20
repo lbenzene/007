@@ -13,7 +13,7 @@
 * P3.7         Low
 * ------------------
 * Music Port
-* P3.7
+* P3.0
 *--------------------
 */
 
@@ -57,12 +57,13 @@ typedef struct __internal_music_data__ {
     unsigned char musicZone,musicZoneLevel,musicZoneID;
     union{
         struct __reg_low_high__{
-            unsigned char reg_low; //TL1 cached data
             unsigned char reg_high;//TH1 cached data
+            unsigned char reg_low; //TL1 cached data
+            
             //low byte
             //   |
             //   |
-            //   \/
+            //   ·
             //high byte
         }reg_8bit;
         unsigned int reg_16bit;//uint==16bit

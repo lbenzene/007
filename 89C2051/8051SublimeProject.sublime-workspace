@@ -143,7 +143,7 @@
 			"file": "Src/main.c",
 			"settings":
 			{
-				"buffer_size": 13658,
+				"buffer_size": 14457,
 				"line_ending": "Windows"
 			}
 		}
@@ -171,10 +171,18 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 160.0,
-		"last_filter": "markdown preview",
+		"height": 360.0,
+		"last_filter": "mark",
 		"selected_items":
 		[
+			[
+				"mark",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"prev",
+				"Markdown Preview: Preview in Browser"
+			],
 			[
 				"markdown preview",
 				"Markdown Preview: Preview in Browser"
@@ -229,10 +237,13 @@
 	"expanded_folders":
 	[
 		"/G/Programe/8051/89C2051",
+		"/G/Programe/8051/89C2051/Log",
 		"/G/Programe/8051/89C2051/Src"
 	],
 	"file_history":
 	[
+		"/G/Programe/8051/89C2051/Log/README.md",
+		"/G/Programe/8051/89C2051/Src/common.h",
 		"/G/Programe/8051/89C2051/main.c",
 		"/G/Programe/8051/89C2051/reg2051.h",
 		"/G/Programe/Github_repiratory/ScriptCollection/README.md",
@@ -286,15 +297,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13658,
+						"buffer_size": 14457,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2473,
-								2477
+								0,
+								0
 							]
 						],
 						"settings":
@@ -305,7 +316,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1097.0,
+						"translation.y": 708.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -370,6 +381,10 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"",
+				"Log\\README.md"
+			]
 		],
 		"width": 0.0
 	},
